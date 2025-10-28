@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface PianoProps {
@@ -14,9 +13,9 @@ const PIANO_KEYS = Array.from({ length: 88 }, (_, i) => {
 
 const Piano: React.FC<PianoProps> = ({ activeNotes }) => {
   return (
-    <div className="flex relative h-40" style={{ minWidth: '1024px' }}>
+    <div className="flex relative h-40 shadow-md" style={{ minWidth: '1024px' }}>
       {PIANO_KEYS.map(({ note, isBlack }, index) => {
-        if (isBlack) return null; // Black keys are rendered separately for positioning
+        if (isBlack) return null; 
 
         const isActive = activeNotes.has(note);
         const hasBlackKeyAfter = PIANO_KEYS[index + 1]?.isBlack;
@@ -25,16 +24,16 @@ const Piano: React.FC<PianoProps> = ({ activeNotes }) => {
           <div key={note} className="relative flex-1">
             {/* White Key */}
             <div
-              className={`w-full h-full border border-gray-600 rounded-b-md transition-colors duration-75 ${
-                isActive ? 'bg-cyan-400' : 'bg-white'
+              className={`w-full h-full border-r border-gray-300 rounded-b-md transition-colors duration-75 ${
+                isActive ? 'bg-blue-400' : 'bg-white'
               }`}
             />
 
             {/* Black Key */}
             {hasBlackKeyAfter && (
               <div
-                className={`absolute top-0 right-[-10px] w-5 h-24 border-2 border-gray-800 rounded-b-md z-10 transition-colors duration-75 ${
-                  activeNotes.has(note + 1) ? 'bg-cyan-500 border-cyan-300' : 'bg-gray-800'
+                className={`absolute top-0 right-[-12px] w-6 h-24 border border-gray-200 rounded-b-md z-10 transition-colors duration-75 shadow-sm ${
+                  activeNotes.has(note + 1) ? 'bg-blue-500 border-blue-300' : 'bg-gray-800'
                 }`}
               />
             )}
