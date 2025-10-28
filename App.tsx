@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { MidiMessage, Note } from './types';
 import { midiNoteToName, midiToVexflowKey } from './utils/midiUtils';
@@ -14,6 +13,7 @@ interface FinalStats {
   score: number;
   notesHit: number;
   notesMissed: number;
+
   accuracy: number;
 }
 
@@ -153,14 +153,14 @@ function App() {
                   className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   disabled={!selectedInputId}
                 >
-                  Start Game
+                  Start Practice
                 </button>
                 {!selectedInputId && <p className="text-red-500 text-sm mt-2">Please connect a MIDI device to start.</p>}
               </>
             )}
             {gameState === 'finished' && finalStats && (
               <>
-                <h2 className="text-3xl font-bold mb-4">Game Over!</h2>
+                <h2 className="text-3xl font-bold mb-4">Practice Session Complete!</h2>
                 <div className="my-6">
                     <Stats {...finalStats} />
                 </div>
@@ -168,7 +168,7 @@ function App() {
                   onClick={handleRestart}
                   className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105"
                 >
-                  Play Again
+                  Practice Again
                 </button>
               </>
             )}
