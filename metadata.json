@@ -1,0 +1,5 @@
+{
+  "name": "Copy of MIDI Keyboard Visualizer",
+  "description": "A web application to visualize key presses from a connected MIDI keyboard in real-time. No drivers needed, thanks to the Web MIDI API.",
+  "requestFramePermissions": []
+}
