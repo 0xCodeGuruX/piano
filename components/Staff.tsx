@@ -1,52 +1,48 @@
+
 import React, { useRef, useEffect } from 'react';
+import Vex from 'vexflow';
 import { Note } from '../types';
 
-declare const Vex: any;
-
 interface StaffProps {
-  note: Note;
+  notesToDisplay: Note[];
+  playedNotes: Note[];
 }
 
-const Staff: React.FC<StaffProps> = ({ note }) => {
+const Staff: React.FC<StaffProps> = ({ notesToDisplay, playedNotes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { Factory } = Vex.Flow;
 
   useEffect(() => {
-    if (containerRef.current && note) {
-      containerRef.current.innerHTML = ''; // Clear previous render
-
-      const VF = Vex.Flow;
-      const renderer = new VF.Renderer(containerRef.current, VF.Renderer.Backends.SVG);
-      renderer.resize(500, 150);
-      const context = renderer.getContext();
-      context.setFont('Arial', 10, '').setBackgroundFillStyle('#FFF');
-
-      const stave = new VF.Stave(10, 20, 480);
-      stave.addClef('treble').setContext(context).draw();
-
-      const staveNote = new VF.StaveNote({
-        keys: [note.vexflowKey],
-        duration: 'q', // 'q' for quarter note
+    if (containerRef.current && notesToDisplay.length > 0) {
+      containerRef.current.innerHTML = '';
+      const factory = new Factory({
+        renderer: { elementId: containerRef.current.id, width: 500, height: 150 },
       });
+
+      const score = factory.EasyScore();
+      const system = factory.System();
+
+      const notesString = notesToDisplay.map(n => n.vexflowKey + '/q').join(', ');
+      const vfNotes = score.notes(notesString, { stem: 'up' });
       
-      // Add accidental if needed
-      if (note.vexflowKey.includes('#')) {
-          staveNote.addAccidental(0, new VF.Accidental('#'));
-      }
-      if (note.vexflowKey.includes('b')) {
-          staveNote.addAccidental(0, new VF.Accidental('b'));
-      }
+      const playedMidiNumbers = new Set(playedNotes.map(p => p.midiNumber));
 
-      const notesToDraw = [staveNote];
-      const voice = new VF.Voice({ num_beats: 1, beat_value: 4 });
-      voice.addTickables(notesToDraw);
+      vfNotes.forEach((vfNote, index) => {
+        const originalNote = notesToDisplay[index];
+        if (playedMidiNumbers.has(originalNote.midiNumber)) {
+          vfNote.setStyle({ fillStyle: 'green', strokeStyle: 'green' });
+        }
+      });
 
-      new VF.Formatter().joinVoices([voice]).format([voice], 400);
+      system.addStave({
+        voices: [score.voice(vfNotes)],
+      }).addClef('treble').addTimeSignature('4/4');
 
-      voice.draw(context, stave);
+      factory.draw();
     }
-  }, [note]);
+  }, [notesToDisplay, playedNotes, Factory]);
 
-  return <div ref={containerRef} className="w-full flex justify-center" />;
+  return <div id="staff-container" ref={containerRef} className="bg-white p-4 rounded-lg shadow-inner" />;
 };
 
 export default Staff;
